@@ -1,0 +1,57 @@
+"use client"
+
+import React, { useEffect, useState } from "react";
+import ProductCard from "./ProductCard";
+import Link from "next/link";
+import { FiArrowRight } from "react-icons/fi";
+
+const PopularProducts = () => {
+    const [topProducts, setTopProducts] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await fetch(
+                "https://summer-essentials-store-six.vercel.app/data.json"
+            );
+            const data = await res.json();
+
+            const topRated = data.slice(0, 4);
+            setTopProducts(topRated);
+        };
+
+        fetchData();
+    }, []);
+
+    return (
+        <section id="popular" className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div className="text-center mb-14 animate__animated animate__fadeInUp">
+                <span className="px-4 py-1.5 glass text-sun-400 text-xs font-bold uppercase tracking-widest rounded-full">
+                    🔥 Most Loved
+                </span>
+                <h2 className="font-display text-4xl sm:text-5xl font-black text-sand-100 mt-4 mb-4">
+                    Popular <span className="gradient-text">Products</span>
+                </h2>
+                <p className="text-sand-100/50 max-w-xl mx-auto">
+                    Our best-selling summer essentials loved by thousands of happy customers.
+                </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {topProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                ))}
+            </div>
+
+            <div className="text-center mt-10">
+                <Link
+                    href="/products"
+                    className="inline-flex items-center gap-2 px-8 py-4 glass rounded-2xl text-sand-100/80 hover:text-sun-400 hover:border-sun-400/30 transition-all font-medium"
+                >
+                    See All Products <FiArrowRight />
+                </Link>
+            </div>
+        </section>
+    );
+};
+
+export default PopularProducts;
