@@ -6,3 +6,8 @@
 
 
 
+/* Light Theme Base */
+body {
+  background: #ffffff;
+  color: #111827; /* gray-900 */
+}
