@@ -2,7 +2,7 @@ import { Button } from "@heroui/react";
 import Link from "next/link";
 
 const Category = async () => {
-    const res = await fetch("https://summer-essentials-store-six.vercel.app/category.json");
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/category.json`);
     const categories = await res.json();
     console.log(categories);
     return (

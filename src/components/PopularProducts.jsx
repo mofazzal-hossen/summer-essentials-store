@@ -10,9 +10,7 @@ const PopularProducts = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const res = await fetch(
-                "https://summer-essentials-store-six.vercel.app/data.json"
-            );
+            const res = await fetch("/data.json");
             const data = await res.json();
 
             const topRated = data.slice(0, 4);

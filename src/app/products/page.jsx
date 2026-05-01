@@ -4,7 +4,7 @@ import Category from "@/components/Category";
 
 export default async function ProductsPage({ searchParams }) {
     const { category } = await searchParams;
-    const res = await fetch("https://summer-essentials-store-six.vercel.app/data.json");
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/data.json`);
     const products = await res.json();
 
     const filteredProducts = category
