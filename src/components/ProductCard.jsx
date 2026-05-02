@@ -2,13 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { FiStar, FiEye } from "react-icons/fi";
 
+
+
 export default function ProductCard({ product }) {
     const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
 
     return (
         <div className="glass rounded-2xl overflow-hidden card-hover group animate__animated animate__fadeInUp">
             {/* Image Container */}
-            <div className="relative h-56 overflow-hidden bg-gradient-to-br from-sun-900/20 to-ocean-700/10">
+            <div className="relative h-57 overflow-hidden bg-gradient-to-br from-sun-900/20 to-ocean-700/10">
                 <Image
                     src={product.image}
                     alt={product.name}
