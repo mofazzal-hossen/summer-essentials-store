@@ -1,3 +1,4 @@
+import { Toaster } from "sonner";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
           {children}
         </main>
         <Footer />
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );

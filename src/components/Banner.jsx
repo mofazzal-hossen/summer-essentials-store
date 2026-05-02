@@ -36,7 +36,7 @@ const Banner = () => {
                 </p>
 
                 <div className="flex flex-wrap gap-4 justify-center">
-                    <Link href="/register" className="btn-summer px-8 py-4 rounded-2xl text-base font-semibold">
+                    <Link href="/signup" className="btn-summer px-8 py-4 rounded-2xl text-base font-semibold">
                         Get Started Free
                     </Link>
                     <Link href="/products" className="glass px-8 py-4 rounded-2xl text-base font-medium text-sand-100/80 hover:text-sun-400 transition-colors">

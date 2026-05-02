@@ -12,6 +12,7 @@ import {
     TextField,
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function SignUpPage() {
 
@@ -36,7 +37,10 @@ export default function SignUpPage() {
         console.log({ data, error })
 
         if (!error) {
+            toast.success("Signup successful! Welcome to SunCart.");
             router.push('/')
+        } else {
+            toast.error(error.message || "Signup failed. Please try again.");
         }
 
     };

@@ -1,98 +1,162 @@
 "use client";
-import React from 'react';
-import Link from 'next/link';
-import { Sun, Menu, ShoppingCart } from 'lucide-react';
-import { authClient } from "@/lib/auth-client";
-import { Avatar, Button } from "@heroui/react";
 
-const Navbar = () => {
-    const { data: session } = authClient.useSession();
-    const user = session?.user;
+import Link from "next/link";
+import Image from "next/image";
+import { useSession, signOut } from "@/lib/auth-client";
+import { useState, useEffect } from "react";
+import { FiSun, FiShoppingBag, FiUser, FiLogOut, FiMenu, FiX } from "react-icons/fi";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-    const handleSignOut = async () => {
-        await authClient.signOut();
+export default function Navbar() {
+    const { data: session } = useSession();
+    const [scrolled, setScrolled] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const router = useRouter();
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    const handleLogout = async () => {
+        await signOut();
+        toast.success("Logged out successfully!");
+        router.push("/");
     };
 
     return (
-        <div className="navbar bg-white/80 backdrop-blur-md sticky top-0 z-50 px-4 md:px-8 border-b border-gray-100">
-            {/* Mobile Menu & Logo */}
-            <div className="navbar-start">
-                <div className="dropdown">
-                    <label tabIndex={0} className="btn btn-ghost lg:hidden">
-                        <Menu className="h-5 w-5" />
-                    </label>
-                    <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-                        <li><Link href="/">Home</Link></li>
-                        <li><Link href="/products">Products</Link></li>
-                        <li><Link href="/profile">My Profile</Link></li>
-                    </ul>
-                </div>
-                <Link href="/" className="flex items-center gap-2 font-bold text-2xl tracking-tighter">
-                    <Sun className="text-orange-500 fill-orange-500" />
-                    <span className="text-gray-800">Sun<span className="text-orange-500">Cart</span></span>
-                </Link>
-            </div>
+        <nav
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
+                ? "glass-dark shadow-lg shadow-black/20 py-3"
+                : "bg-transparent py-5"
+                }`}
+        >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between">
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center gap-2 group">
+                        <div className="relative">
+                            <FiSun className="text-3xl text-sun-400 animate-spin" style={{ animationDuration: '8s' }} />
+                        </div>
+                        <span
+                            className="font-display text-2xl font-bold gradient-text tracking-tight"
+                        >
+                            SunCart
+                        </span>
+                    </Link>
 
-            {/* Desktop Links */}
-            <div className="navbar-center hidden lg:flex">
-                <ul className="menu menu-horizontal px-1 font-medium gap-2">
-                    <li><Link href="/" className="hover:text-orange-500 text-gray-600">Home</Link></li>
-                    <li><Link href="/products" className="hover:text-orange-500 text-gray-600">Products</Link></li>
-                    <li><Link href="/profile" className="hover:text-orange-500 text-gray-600">My Profile</Link></li>
-                </ul>
-            </div>
+                    {/* Desktop Nav Links */}
+                    <div className="hidden md:flex items-center gap-8">
+                        <Link
+                            href="/"
+                            className="text-sand-100/80 hover:text-sun-400 transition-colors font-medium text-sm tracking-wide uppercase"
+                        >
+                            Home
+                        </Link>
+                        <Link
+                            href="/products"
+                            className="text-sand-100/80 hover:text-sun-400 transition-colors font-medium text-sm tracking-wide uppercase"
+                        >
+                            Products
+                        </Link>
+                        {session && (
+                            <Link
+                                href="/my-profile"
+                                className="text-sand-100/80 hover:text-sun-400 transition-colors font-medium text-sm tracking-wide uppercase"
+                            >
+                                My Profile
+                            </Link>
+                        )}
+                    </div>
 
-            {/* End Icons & Auth */}
-            <div className="navbar-end gap-4">
-                <Link href="/products" className="btn btn-ghost btn-circle">
-                    <ShoppingCart className="h-5 w-5 text-gray-600" />
-                </Link>
-
-                <div className="flex items-center gap-4">
-                    {/* যদি user না থাকে */}
-                    {!user && (
-                        <ul className="flex items-center text-sm gap-6">
-                            <li>
-                                <Link
-                                    href="/signup"
-                                    className="text-gray-600 font-medium hover:text-orange-500 transition"
-                                >
-                                    SignUp
+                    {/* Auth Buttons */}
+                    <div className="hidden md:flex items-center gap-4">
+                        {session ? (
+                            <div className="flex items-center gap-3">
+                                <Link href="/my-profile" className="flex items-center gap-2 group">
+                                    <div className="relative w-9 h-9 rounded-full overflow-hidden ring-2 ring-sun-400/50 group-hover:ring-sun-400 transition-all">
+                                        {session.user?.image ? (
+                                            <Image
+                                                src={session.user.image}
+                                                alt={session.user.name || "User"}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-br from-sun-400 to-coral-500 flex items-center justify-center text-black font-bold text-sm">
+                                                {session.user?.name?.[0]?.toUpperCase() || "U"}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <span className="text-sand-100/80 text-sm font-medium hidden lg:block">
+                                        {session.user?.name?.split(" ")[0]}
+                                    </span>
                                 </Link>
-                            </li>
-                            <li>
+                                <button
+                                    onClick={handleLogout}
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-sand-100/80 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                                >
+                                    <FiLogOut />
+                                    <span className="hidden lg:block">Logout</span>
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3">
                                 <Link
                                     href="/signIn"
-                                    className="text-gray-600 font-medium hover:text-orange-500 transition"
+                                    className="px-5 py-2 rounded-xl text-sm font-medium text-sand-100/80 hover:text-sun-400 transition-colors"
                                 >
-                                    SignIn
+                                    Login
                                 </Link>
-                            </li>
-                        </ul>
-                    )}
+                                <Link
+                                    href="/signup"
+                                    className="btn-summer px-5 py-2 rounded-xl text-sm"
+                                >
+                                    Register
+                                </Link>
+                            </div>
+                        )}
+                    </div>
 
-                    {/* যদি user থাকে */}
-                    {user && (
-                        <div className="flex items-center gap-3">
-                            <Avatar
-                                src={user?.image || ""}
-                                name={user?.name?.charAt(0) || "U"}
-                                className="border-2 border-orange-500 p-0.5"
-                            />
-
-                            <Button
-                                onClick={handleSignOut}
-                                size="sm"
-                                className="bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl"
-                            >
-                                SignOut
-                            </Button>
-                        </div>
-                    )}
+                    {/* Mobile Menu Toggle */}
+                    <button
+                        className="md:hidden text-sand-100 text-2xl p-2"
+                        onClick={() => setMenuOpen(!menuOpen)}
+                    >
+                        {menuOpen ? <FiX /> : <FiMenu />}
+                    </button>
                 </div>
             </div>
-        </div>
-    );
-};
 
-export default Navbar;
+            {/* Mobile Menu */}
+            {menuOpen && (
+                <div className="md:hidden glass-dark mt-2 mx-4 rounded-2xl p-5 animate__animated animate__fadeInDown animate__faster">
+                    <div className="flex flex-col gap-4">
+                        <Link href="/" onClick={() => setMenuOpen(false)} className="text-sand-100/80 hover:text-sun-400 transition-colors font-medium">Home</Link>
+                        <Link href="/products" onClick={() => setMenuOpen(false)} className="text-sand-100/80 hover:text-sun-400 transition-colors font-medium">Products</Link>
+                        {session && (
+                            <Link href="/my-profile" onClick={() => setMenuOpen(false)} className="text-sand-100/80 hover:text-sun-400 transition-colors font-medium">My Profile</Link>
+                        )}
+                        <div className="border-t border-white/10 pt-4">
+                            {session ? (
+                                <button
+                                    onClick={() => { handleLogout(); setMenuOpen(false); }}
+                                    className="flex items-center gap-2 text-red-400 font-medium"
+                                >
+                                    <FiLogOut /> Logout
+                                </button>
+                            ) : (
+                                <div className="flex gap-3">
+                                    <Link href="/signIn" onClick={() => setMenuOpen(false)} className="flex-1 text-center py-2 border border-sun-400/30 rounded-xl text-sand-100/80 hover:text-sun-400 transition-colors text-sm">Login</Link>
+                                    <Link href="/signup" onClick={() => setMenuOpen(false)} className="flex-1 text-center btn-summer py-2 rounded-xl text-sm">Register</Link>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+        </nav>
+    );
+}
