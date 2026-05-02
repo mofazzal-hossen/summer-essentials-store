@@ -2,6 +2,10 @@ import { betterAuth, google } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 
+if (!process.env.DB_URI) {
+    throw new Error("DB_URI is not defined in environment variables");
+}
+
 const client = new MongoClient(process.env.DB_URI);  //mongodb account 
 
 await client.connect();
@@ -9,10 +13,10 @@ const db = client.db("suncart-new");
 
 export const auth = betterAuth({
     database: mongodbAdapter(db, {
-
         client
     }),
-
+    baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+    secret: process.env.BETTER_AUTH_SECRET,
     emailAndPassword: {
         enabled: true,
     },
